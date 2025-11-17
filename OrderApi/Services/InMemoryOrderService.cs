@@ -43,12 +43,12 @@ namespace OrderApi.Services
 
                 orders.Add(order);
 
-                // _logger.LogInformation(
-                // "Seeded order {OrderId} for customer {CustomerName} with amount {Amount} and status {Status}",
-                // order.Id,
-                // order.CustomerName,
-                // order.Amount,
-                // order.Status);
+                _logger.LogInformation(
+                "Seeded order {OrderId} for customer {CustomerName} with amount {Amount} and status {Status}",
+                order.Id,
+                order.CustomerName,
+                order.Amount,
+                order.Status);
             }
 
             _logger.LogInformation("Seeded {Count} orders into in-memory store", orders.Count);

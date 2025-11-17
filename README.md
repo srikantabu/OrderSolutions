@@ -1,12 +1,9 @@
 ---
-
-````md
 # Orders Dashboard – Full Stack Application
 
 A full-stack Orders Dashboard built using ASP.NET Core 9 Web API, React + TypeScript, Vite, Axios, and TailwindCSS.
 
 The project implements real-world functionality including pagination, sorting, filtering, debounced search, status updates, and a clean UI/UX.
-
 ---
 
 ## Tech Stack

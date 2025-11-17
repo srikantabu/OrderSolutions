@@ -1,12 +1,18 @@
-import React from "react";
+// -----------------------------------------------------------------------------
+// File: SearchBar.tsx
+// Project: OrderSolutions - React Client
+// Description: Input component for debounced text search.
+// Author: Srikanta B U
+// -----------------------------------------------------------------------------
 
 interface Props {
   search: string;
   setSearch: (val: string) => void;
 }
+
 const SearchBar = ({ search, setSearch }: Props) => {
   return (
-    <div className="mb-4">
+    <div>
       <input
         type="text"
         value={search}

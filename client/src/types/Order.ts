@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------
+// File: Order.ts
+// Project: OrderSolutions - React Client
+// Description: Type definitions for Order model, sorting types, query parameters, and responses.
+// Author: Srikanta B U
+// -----------------------------------------------------------------------------
+
 export interface Order {
   id: number;
   customerName: string;

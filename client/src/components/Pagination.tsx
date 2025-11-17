@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------
+// File: Pagination.tsx
+// Project: OrderSolutions - React Client
+// Description: Pagination controls for navigating between pages of orders.
+// Author: Srikanta B U
+// -----------------------------------------------------------------------------
+
 interface Props {
   page: number;
   setPage: (p: number) => void;

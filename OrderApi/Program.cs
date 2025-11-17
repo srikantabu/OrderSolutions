@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using OrderApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,20 @@ builder.Services.AddControllers()
     {
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+
+    options.ReportApiVersions = true;
+
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(),
+        new QueryStringApiVersionReader("api-version"),
+        new HeaderApiVersionReader("X-Api-Version")
+    );
+});
 
 builder.Services.AddSingleton<IOrderService, InMemoryOrderService>();
 
@@ -32,3 +48,5 @@ app.UseCors(corsPolicy);
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

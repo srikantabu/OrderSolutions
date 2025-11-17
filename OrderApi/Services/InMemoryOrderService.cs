@@ -2,12 +2,21 @@ using OrderApi.Models;
 
 namespace OrderApi.Services
 {
+    // -----------------------------------------------------------------------------
+    // File: InMemoryOrderService.cs
+    // Project: OrderSolutions - Backend API
+    // Description: Provides in-memory storage and operations for orders, used as a mock database.
+    // Author: Srikanta B U
+    // -----------------------------------------------------------------------------
+
     public class InMemoryOrderService : IOrderService
     {
         private readonly List<Order> _orders;
+        private readonly ILogger<InMemoryOrderService> _logger;
 
-        public InMemoryOrderService()
+        public InMemoryOrderService(ILogger<InMemoryOrderService> logger)
         {
+            _logger = logger;
             _orders = Seed();
         }
 
@@ -23,17 +32,26 @@ namespace OrderApi.Services
 
             for (int i = 1; i <= count; i++)
             {
-                string customerName = $"{names[rnd.Next(names.Length)]}";
-
-                orders.Add(new Order
+                var order = new Order
                 {
                     Id = i,
-                    CustomerName = customerName,
+                    CustomerName = $"{names[rnd.Next(names.Length)]}",
                     Amount = Math.Round(rnd.NextDouble() * 5000, 2),
                     Status = statuses[rnd.Next(statuses.Length)],
                     CreatedDate = DateTime.UtcNow.AddDays(-rnd.Next(1, 30))
-                });
+                };
+
+                orders.Add(order);
+
+                // _logger.LogInformation(
+                // "Seeded order {OrderId} for customer {CustomerName} with amount {Amount} and status {Status}",
+                // order.Id,
+                // order.CustomerName,
+                // order.Amount,
+                // order.Status);
             }
+
+            _logger.LogInformation("Seeded {Count} orders into in-memory store", orders.Count);
 
             return orders;
         }
@@ -47,9 +65,22 @@ namespace OrderApi.Services
         public bool UpdateStatus(int id, OrderStatus newStatus)
         {
             var order = GetById(id);
-            if (order == null) return false;
+            if (order == null)
+            {
+                _logger.LogWarning("Attempted to update status for non-existent order {OrderId}", id);
+                return false;
+            }
 
+            var oldStatus = order.Status;
             order.Status = newStatus;
+
+            _logger.LogInformation(
+                "Order {OrderId} status updated from {OldStatus} to {NewStatus}",
+                id,
+                oldStatus,
+                newStatus
+            );
+
             return true;
         }
     }

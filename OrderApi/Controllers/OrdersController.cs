@@ -5,15 +5,26 @@ using OrderApi.Services;
 
 namespace OrderApi.Controllers
 {
+
+    // -----------------------------------------------------------------------------
+    // File: OrdersController.cs
+    // Project: OrderSolutions - Backend API
+    // Description: Controller exposing API endpoints for retrieving and updating orders.
+    // Author: Srikanta B U
+    // -----------------------------------------------------------------------------
+
     [ApiController]
-    [Route("orders")]
+    [ApiVersion("1.0")]
+    [Route("v{version:apiVersion}/orders")]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, ILogger<OrdersController> logger)
         {
             _orderService = orderService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -26,6 +37,11 @@ namespace OrderApi.Controllers
             [FromQuery] string? order = "asc"
         )
         {
+            _logger.LogInformation(
+                "GET /orders called with page={Page}, limit={Limit}, search={Search}, status={Status}, sortBy={SortBy}, order={Order}",
+                page, limit, search, status, sortBy, order
+            );
+
             if (page <= 0) page = 1;
             if (limit <= 0) page = 10;
 
@@ -87,20 +103,32 @@ namespace OrderApi.Controllers
         [HttpPost("{id}/status")]
         public ActionResult UpdateOrderStatus(int id, [FromBody] UpdateStatusRequest updateStatusRequest)
         {
+            _logger.LogInformation(
+                "POST /orders/{OrderId}/status called with payload {@Request}",
+                id, updateStatusRequest
+            );
+
             if (string.IsNullOrWhiteSpace(updateStatusRequest.Status))
             {
+                _logger.LogWarning("Status update for order {OrderId} failed: missing status", id);
                 return BadRequest(new { message = "Status is required" });
             }
 
             if (!Enum.TryParse<OrderStatus>(updateStatusRequest.Status, true, out var newStatus))
             {
-                return BadRequest(new { message = "Invalid status" });
+                _logger.LogWarning("Status update for order {OrderId} failed: invalid status {Status}", id, updateStatusRequest.Status);
+                return BadRequest(new { message = "Invalid status value" });
             }
 
             var updated = _orderService.UpdateStatus(id, newStatus);
 
             if (!updated)
-                return NotFound(new { message = $"Order {id} not found" });
+            {
+                _logger.LogWarning("Status update for order {OrderId} failed: order not found", id);
+                return NotFound(new { message = $"Order with id '{id}' not found" });
+            }
+
+            _logger.LogInformation("Status update for order {OrderId} succeeded, new status {NewStatus}", id, newStatus);
 
             return Ok(new { message = "Status updated successfully" });
         }

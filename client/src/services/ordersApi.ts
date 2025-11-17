@@ -1,8 +1,15 @@
 import axios from "axios";
 import type { OrdersQueryParams, OrdersResponse } from "../types/Order";
 
+// -----------------------------------------------------------------------------
+// File: orderApi.ts
+// Project: OrderSolutions - React Client
+// Description: Axios API layer for fetching orders and updating order status from backend.
+// Author: Srikanta B U
+// -----------------------------------------------------------------------------
+
 const api = axios.create({
-  baseURL: "http://localhost:5179",
+  baseURL: "http://localhost:5179/v1",
 });
 
 export const getOrders = async (

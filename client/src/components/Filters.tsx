@@ -1,14 +1,20 @@
-import React from "react";
+// -----------------------------------------------------------------------------
+// File: Filters.tsx
+// Project: OrderSolutions - React Client
+// Description: Dropdown selector for filtering by order status.
+// Author: Srikanta B U
+// -----------------------------------------------------------------------------
 
 interface Props {
   status: string;
   setStatus: (s: string) => void;
 }
+
 const Filters = ({ status, setStatus }: Props) => {
   return (
-    <div className="mb-4">
+    <div>
       <select
-        className="border p-2 rounded"
+        className="border p-2 rounded w-full"
         value={status}
         onChange={(e) => setStatus(e.target.value)}
       >

@@ -1,7 +1,14 @@
-import OrdersDashboard from "./components/OrdersDashboard";
+import { Route, Routes } from "react-router-dom";
+import OrdersDashboard from "./pages/OrdersDashboard";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
-  return <OrdersDashboard />;
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/dashboard" element={<OrdersDashboard />} />
+    </Routes>
+  );
 }
 
 export default App;

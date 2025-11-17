@@ -143,62 +143,48 @@ Content-Type: application/json
 
 ---
 
-## Program.cs (Key Configuration)
+## Backend Configuration Overview
 
-```csharp
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using OrderApi.Services;
+The API is built using ASP.NET Core 9 and contains the following key configurations:
 
-var builder = WebApplication.CreateBuilder(args);
+### **1. Controllers + JSON Enum Serialization**
 
-// Controllers + enum serialization as strings
-builder.Services.AddControllers()
-    .AddJsonOptions(o =>
-    {
-        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+- Enums (`OrderStatus`) are sent/received as **strings**, not integers.
+- Achieved via `JsonStringEnumConverter`.
 
-// API versioning
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ReportApiVersions = true;
+### **2. API Versioning**
 
-    options.ApiVersionReader = ApiVersionReader.Combine(
-        new UrlSegmentApiVersionReader(),
-        new QueryStringApiVersionReader("api-version"),
-        new HeaderApiVersionReader("X-Api-Version")
-    );
-});
+- Supports versioning via:
 
-// In-memory order service
-builder.Services.AddSingleton<IOrderService, InMemoryOrderService>();
+  - URL segment (e.g., `/v1/orders`)
+  - Query string (`?api-version=1.0`)
+  - Header (`X-Api-Version`)
 
-// CORS for frontend
-var corsPolicy = "AllowFrontend";
-builder.Services.AddCors(o =>
-{
-    o.AddPolicy(corsPolicy, policy =>
-    {
-        policy
-            .WithOrigins("http://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
+- Default API version: **1.0**
 
-var app = builder.Build();
+### **3. Dependency Injection**
 
-app.UseCors(corsPolicy);
-app.MapControllers();
-app.Run();
+- Uses an **in-memory order service** (`IOrderService → InMemoryOrderService`)
+- Seeds 55 randomized orders when the app starts.
 
-// For integration testing (WebApplicationFactory<Program>)
-public partial class Program { }
-```
+### **4. CORS**
+
+- Allows the React client at:
+
+  ```
+  http://localhost:5173
+  ```
+
+- All headers and methods allowed.
+
+### **5. Logging**
+
+- Controller logs every request (filters, pagination, etc.)
+- Service logs seed data and status update attempts.
+
+### **6. WebApplicationFactory Support**
+
+- `partial class Program` is included for integration testing (required by xUnit).
 
 ---
 
